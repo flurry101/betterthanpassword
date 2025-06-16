@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+    <title>BetterThanPassword</title>
+    <style>
+        body {
+            width: 400px;
+            padding: 20px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #0078d4;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #888;
+        }
+        .input-group {
+            position: relative;
+        }
+        #passwordInput {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #2d2d2d;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #2d2d2d;
+            color: #e0e0e0;
+            box-sizing: border-box;
+        }
+        #passwordInput:focus {
+            outline: none;
+            border-color: #0078d4;
+        }
+        .main-score {
+            text-align: center;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 8px;
+            position: relative;
+        }
+        .emoji-score {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .score-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0078d4;
+        }
+        .score-label {
+            font-size: 16px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .weakness-list {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .weakness-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #3d3d3d;
+        }
+        .weakness-item:last-child {
+            border-bottom: none;
+        }
+        .weakness-icon {
+            font-size: 20px;
+        }
+        .breach-alert {
+            background: #442727;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        .breach-alert.visible {
+            display: block;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        .technical-details {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .technical-details summary {
+            cursor: pointer;
+            color: #0078d4;
+            font-weight: bold;
+        }
+        .technical-details .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #888;
+        }
+        .badges-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .badge {
+            background: #2d2d2d;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.4;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .badge.earned {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        .badge-icon {
+            font-size: 20px;
+        }
+        .roast-box {
+            background: linear-gradient(45deg, #2d2d2d, #3d3d3d);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-style: italic;
+            color: #ffd93d;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .roast-box.visible {
+            display: block;
+        }
+        .toggle-roast {
+            background: none;
+            border: 2px solid #ffd93d;
+            color: #ffd93d;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            margin-top: 10px;
+            width: auto;
+            align-self: center;
+        }
+        .toggle-roast:hover {
+            background: #ffd93d22;
+            transform: scale(1.05);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .tab-button {
+            flex: 1;
+            padding: 8px;
+            background: #2d2d2d;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            background: #0078d4;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .generate-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .generate-button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .generate-button:hover {
+            background: #0086ef;
+            transform: translateY(-1px);
+        }
+        .generate-button:active {
+            transform: translateY(0);
+        }
+        .generated-password {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            position: relative;
+            display: none;
+        }
+        .generated-password.visible {
+            display: block;
+        }
+        .copy-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #0078d4;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .copy-button:hover {
+            color: #0086ef;
+        }
+        .qr-code {
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+        .qr-code.visible {
+            display: block;
+        }
+        .qr-code img {
+            max-width: 200px;
+            border-radius: 4px;
+        }
+        .length-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .slider-value {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+        #error-message {
+            display: none;
+            color: red;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+        }
+        .strength-meter {
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BetterThanPassword</h1>
+            <p>Check & generate secure passwords</p>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-button active" data-tab="check">Check Password</button>
+            <button class="tab-button" data-tab="generate">Generate Password</button>
+        </div>
+
+        <div class="tab-content active" id="check-tab">
+            <!-- Existing password check content -->
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="Type your password here...">
+            </div>
+            
+            <div class="main-score">
+                <div class="emoji-score" id="emojiScore">🔒</div>
+                <div class="score-text" id="userFriendlyScore">Super Strong</div>
+                <div class="score-label">Password Rating</div>
+            </div>
+
+            <div class="weakness-list" id="weaknessList"></div>
+
+            <div class="breach-alert" id="breachAlert">
+                ⚠️ Warning: Security Risk Detected
+                <div id="breachDetails"></div>
+            </div>
+
+            <button class="toggle-roast" id="toggleRoast">Show Roast Mode 🔥</button>
+            <div class="roast-box" id="roastBox"></div>
+
+            <div class="badges-container" id="badgesContainer"></div>
+
+            <details class="technical-details">
+                <summary>Technical Details 🔍</summary>
+                <div class="metric">
+                    <span class="tooltip">
+                        Entropy Score
+                        <span class="tooltiptext">Measures password randomness - higher is better!</span>
+                    </span>
+                    <span id="entropyScore">0 bits</span>
+                </div>
+                <div class="metric">
+                    <span class="tooltip">
+                        Character Types
+                        <span class="tooltiptext">Mix of uppercase, lowercase, numbers, and symbols</span>
+                    </span>
+                    <span id="charSets">-</span>
+                </div>
+                <div class="metric">
+                    <span class="tooltip">
+                        Raw Score
+                        <span class="tooltiptext">Technical rating from 0-100</span>
+                    </span>
+                    <span id="strengthScore">0/100</span>
+                </div>
+            </details>
+        </div>
+
+        <div class="tab-content" id="generate-tab">
+            <div class="generate-options">
+                <button class="generate-button" data-type="random">
+                    <span>🎲</span> Random Password
+                </button>
+                <button class="generate-button" data-type="memorable">
+                    <span>🧠</span> Memorable Password
+                </button>
+                <button class="generate-button" data-type="passkey">
+                    <span>🔑</span> Generate Passkey + QR
+                </button>
+                
+                <div class="length-control">
+                    <input type="range" class="length-slider" id="lengthSlider" min="12" max="32" value="16">
+                    <div class="slider-value">Length: <span id="lengthValue">16</span></div>
+                </div>
+            </div>
+
+            <div class="generated-password" id="generatedPassword">
+                <span id="passwordText"></span>
+                <button class="copy-button" id="copyButton">📋</button>
+            </div>
+
+            <div class="qr-code" id="qrCode">
+                <!-- QR code will be inserted here -->
+            </div>
+        </div>
+    </div>
+    <div id="error-message"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
