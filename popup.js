@@ -424,11 +424,21 @@ class PasswordApp {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', async () => {
+    // Check if there is a result from context menu action
+    chrome.storage.local.get(['pswdCheckResult'], (result) => {
+        if (result && result.pswdCheckResult) {
+            const app = new PasswordApp();
+            app.updateUI(result.pswdCheckResult);
+            // Optionally clear the badge and storage after displaying
+            chrome.action.setBadgeText({ text: '' });
+            chrome.storage.local.remove('pswdCheckResult');
+        } else {
+            const app = new PasswordApp();
+            app.checkPassword(''); // Initialize UI with empty state
+        }
+    });
     const isServerHealthy = await checkServerHealth();
     if (!isServerHealthy) {
         showError('Unable to connect to the password service. Please make sure the server is running.');
     }
-    
-    const app = new PasswordApp();
-    app.checkPassword(''); // Initialize UI with empty state
 });

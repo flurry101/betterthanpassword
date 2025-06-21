@@ -18,7 +18,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
         id: "checkpswdStrength",
-        title: "Check pswd Strength",
+        title: "Check Password", // Changed label to be more user-friendly
         contexts: ["selection", "editable"]
     });
 });
@@ -30,7 +30,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         if (!isHealthy) {
             chrome.tabs.sendMessage(tab.id, {
                 type: 'error',
-                message: 'pswd service is not available. Please make sure the server is running.'
+                message: 'Password service is not available. Please make sure the server is running.'
             });
             return;
         }
@@ -48,15 +48,18 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             }
 
             const data = await response.json();
-            chrome.tabs.sendMessage(tab.id, {
-                type: 'result',
-                data: data
+            // Store result in chrome.storage.local for popup to read
+            chrome.storage.local.set({ pswdCheckResult: data }, () => {
+                // Optionally, set a badge to indicate result is ready
+                chrome.action.setBadgeText({ text: '!' });
+                chrome.action.setBadgeBackgroundColor({ color: '#FF5722' });
             });
+            // Note: Cannot programmatically open the popup, user must click the extension icon
         } catch (error) {
             console.error('Error:', error);
             chrome.tabs.sendMessage(tab.id, {
                 type: 'error',
-                message: 'Failed to check pswd. Please try again.'
+                message: 'Failed to check password. Please try again.'
             });
         }
     }

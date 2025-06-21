@@ -308,7 +308,7 @@ def generate_passkey() -> Dict:
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white")
     buffered = BytesIO()
-    qr_img.save(buffered, format="PNG")
+    qr_img.save(buffered, "PNG")
     qr_code = base64.b64encode(buffered.getvalue()).decode('utf-8')
     return {
         "passkey": passkey,
