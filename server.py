@@ -38,7 +38,7 @@ if not os.path.exists(COMMON_WORDS_FILE):
         "indian_names": ["arjun", "rahul", "priya", "neha", "amit", "suresh", "deepak", "kumar", "rajesh", "sanjay", "anita", "meera", "sunita", "kavita", "pradeep", "vijay", "suresh", "ramesh", "mahesh", "dinesh", "anand", "rajiv", "sanjay", "vivek", "nitin", "pankaj", "manish", "sachin", "rohit", "virat", "dhoni", "kohli", "rohit", "bumrah", "pandya", "rahane", "pujara", "ashwin", "jadeja", "bumrah", "priyanka", "deepika", "katrina", "alia", "kareena", "aishwarya", "shahrukh", "amir", "salman", "hrithik"],
         "indian_cities": ["mumbai", "delhi", "bangalore", "hyderabad", "chennai", "kolkata", "pune", "ahmedabad", "jaipur", "lucknow", "kanpur", "nagpur", "indore", "thane", "bhopal", "visakhapatnam", "patna", "vadodara", "ghaziabad", "ludhiana", "agra", "nashik", "faridabad", "meerut", "rajkot", "varanasi", "srinagar", "aurangabad", "dhanbad", "amritsar", "noida", "ranchi", "howrah", "gwalior", "jodhpur", "coimbatore", "vijayawada", "jabalpur", "gurgaon", "guwahati"],
         "indian_brands": ["tata", "reliance", "infosys", "tcs", "wipro", "hdfc", "icici", "sbi", "airtel", "jio", "maruti", "mahindra", "bajaj", "hero", "tvs", "ashok", "hindustan", "unilever", "itc", "nestle", "amul", "parle", "britannia", "cadbury", "colgate", "dabur", "patanjali", "titan", "tanishq", "kalyan", "bigbazaar", "flipkart", "myntra", "snapdeal", "paytm", "ola", "swiggy", "zomato", "make my trip", "irctc"],
-        "common_words": ["football", "baseball", "dragon", "master", "monkey", "login", "welcome", "princess", "qwerty", "abc123", "trustno1", "letmein", "dragon", "baseball", "iloveyou", "starwars", "sunshine", "princess", "admin", "welcome", "shadow", "ashley", "football", "michael", "mustang", "summer", "hunter", "freedom", "whatever", "qwerty", "baseball", "dragon", "master", "monkey", "letmein", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master"],
+        "common_words": ["football", "baseball", "dragon", "master", "monkey", "login", "welcome", "princess", "qwerty", "abc123", "trustno1", "letmein", "dragon", "baseball", "iloveyou", "starwars", "sunshine", "princess", "admin", "welcome", "shadow", "ashley", "football", "michael", "mustang", "summer", "hunter", "freedom", "whatever", "qwerty", "baseball", "dragon", "master", "monkey", "letmein", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master", "hello", "freedom", "whatever", "qazwsx", "michael", "football", "baseball", "welcome", "shadow", "ashley", "sunshine", "michael", "football", "iloveyou", "trustno1", "welcome", "monkey", "login", "abc123", "starwars", "123123", "dragon", "passw0rd", "master"],
     }
     with open(COMMON_WORDS_FILE, 'w') as f:
         json.dump(COMMON_WORDS, f)
@@ -150,7 +150,7 @@ def check_haveibeenpwned(pswd: str) -> int:
     prefix,suffix = pswd_hash[:5],pswd_hash[5:]
     try:
         response = requests.get(
-            f'https://api.pwnedpswds.com/range/{prefix}',
+            f'https://api.pwnedpasswords.com/range/{prefix}',
             headers={'Add-Padding': 'true'},
             timeout=5
         )
@@ -329,6 +329,34 @@ def generate_random_pswd(length: int = 16) -> str:
     alphabet = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
+# Custom password generator
+import string
+
+def generate_custom_pswd(custom_word, use_lowercase, use_uppercase, use_numbers, use_symbols, length):
+    charsets = ''
+    if use_lowercase:
+        charsets += string.ascii_lowercase
+    if use_uppercase:
+        charsets += string.ascii_uppercase
+    if use_numbers:
+        charsets += string.digits
+    if use_symbols:
+        charsets += string.punctuation
+    if not charsets:
+        charsets = string.ascii_letters
+    # Ensure custom_word fits
+    if len(custom_word) > length:
+        custom_word = custom_word[:length]
+    remaining_len = length - len(custom_word)
+    if remaining_len < 0:
+        remaining_len = 0
+    random_part = ''.join(secrets.choice(charsets) for _ in range(remaining_len))
+    # Place custom_word at a random position
+    import random
+    insert_at = random.randint(0, remaining_len) if custom_word else 0
+    pswd = random_part[:insert_at] + custom_word + random_part[insert_at:]
+    return pswd
+
 @app.route('/check_pswd', methods=['POST', 'OPTIONS'])
 def check_pswd():
     if request.method == 'OPTIONS':
@@ -361,6 +389,16 @@ def generate_pswd():
             return jsonify({
                 "pswd": generate_memorable_pswd()
             })
+        elif pswd_type == 'custom':
+            # Custom password generation
+            custom_word = data.get('custom_word', '')
+            use_lowercase = data.get('use_lowercase', True)
+            use_uppercase = data.get('use_uppercase', True)
+            use_numbers = data.get('use_numbers', True)
+            use_symbols = data.get('use_symbols', True)
+            length = data.get('length', 16)
+            pswd = generate_custom_pswd(custom_word, use_lowercase, use_uppercase, use_numbers, use_symbols, length)
+            return jsonify({"pswd": pswd})
         else:  # random
             length = data.get('length', 16)
             return jsonify({

@@ -142,6 +142,20 @@ class PasswordApp {
             });
         });
 
+        // Custom password generation
+        const customBtn = document.getElementById('generateCustomBtn');
+        if (customBtn) {
+            customBtn.addEventListener('click', () => {
+                const customWord = document.getElementById('customWordInput')?.value || '';
+                const useLowercase = document.getElementById('customLowercase')?.checked;
+                const useUppercase = document.getElementById('customUppercase')?.checked;
+                const useNumbers = document.getElementById('customNumbers')?.checked;
+                const useSymbols = document.getElementById('customSymbols')?.checked;
+                const length = this.lengthSlider ? parseInt(this.lengthSlider.value) : 16;
+                this.generateCustomPassword({ customWord, useLowercase, useUppercase, useNumbers, useSymbols, length });
+            });
+        }
+
         // Copy button
         if (this.copyButton && this.passwordText) {
             this.copyButton.addEventListener('click', () => {
@@ -312,12 +326,12 @@ class PasswordApp {
         }
 
         try {
-            const data = await fetchWithRetry(`${API_BASE_URL}/check_password`, {
+            const data = await fetchWithRetry(`${API_BASE_URL}/check_pswd`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-                body: JSON.stringify({ password })
+                body: JSON.stringify({ pswd: password })
             });
             
             data.password = password; // Add password for character set analysis
@@ -337,7 +351,7 @@ class PasswordApp {
     async generatePassword(type, length = 16) {
         try {
             hideError();
-            const data = await fetchWithRetry(`${API_BASE_URL}/generate_password`, {
+            const data = await fetchWithRetry(`${API_BASE_URL}/generate_pswd`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -349,7 +363,7 @@ class PasswordApp {
                 throw new Error(data.error);
             }
             
-            const generatedPass = data.password || data.passkey || '';
+            const generatedPass = data.pswd || data.passkey || '';
             
             if (this.passwordInput) {
                 this.passwordInput.value = generatedPass;
@@ -368,6 +382,42 @@ class PasswordApp {
         } catch (error) {
             console.error('Error generating password:', error);
             showError('Unable to generate password. Please make sure the server is running.');
+        }
+    }
+
+    async generateCustomPassword(options) {
+        try {
+            hideError();
+            const data = await fetchWithRetry(`${API_BASE_URL}/generate_pswd`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type: 'custom',
+                    custom_word: options.customWord,
+                    use_lowercase: options.useLowercase,
+                    use_uppercase: options.useUppercase,
+                    use_numbers: options.useNumbers,
+                    use_symbols: options.useSymbols,
+                    length: options.length
+                })
+            });
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            const generatedPass = data.pswd || '';
+            if (this.passwordInput) {
+                this.passwordInput.value = generatedPass;
+                await this.checkPassword(generatedPass);
+            }
+            if (this.generatedPassword && this.passwordText) {
+                this.generatedPassword.classList.add('visible');
+                this.passwordText.textContent = generatedPass;
+            }
+        } catch (error) {
+            console.error('Error generating custom password:', error);
+            showError('Unable to generate custom password. Please make sure the server is running.');
         }
     }
 }

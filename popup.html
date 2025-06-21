@@ -404,6 +404,19 @@
                     <input type="range" class="length-slider" id="lengthSlider" min="12" max="32" value="16">
                     <div class="slider-value">Length: <span id="lengthValue">16</span></div>
                 </div>
+
+                <!-- Custom Password Section -->
+                <div class="custom-password-section" style="margin-top: 10px; padding: 10px; border: 1px solid #444; border-radius: 6px; background: #232323;">
+                    <div style="font-weight: bold; margin-bottom: 6px;">Custom Password Options</div>
+                    <input type="text" id="customWordInput" placeholder="Custom word (optional)" style="width: 100%; margin-bottom: 8px; padding: 6px; border-radius: 4px; border: 1px solid #333; background: #181818; color: #fff;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <label><input type="checkbox" id="customLowercase" checked> Lowercase</label>
+                        <label><input type="checkbox" id="customUppercase" checked> Uppercase</label>
+                        <label><input type="checkbox" id="customNumbers" checked> Numbers</label>
+                        <label><input type="checkbox" id="customSymbols" checked> Symbols</label>
+                    </div>
+                    <button class="generate-button" id="generateCustomBtn" style="width: 100%; margin-top: 4px; background: #444;">✨ Generate Custom Password</button>
+                </div>
             </div>
 
             <div class="generated-password" id="generatedPassword">
